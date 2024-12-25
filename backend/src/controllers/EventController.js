@@ -28,15 +28,26 @@ export class EventController {
 
     async getEvents(req, res) {
         try {
-            const { date, location, eventType } = req.query;
+            const { date, location, eventType, limit = 10, page = 1, sortBy = 'date', order = 'asc' } = req.query;
             const filter = {};
 
             if (date) filter.date = { $gte: new Date(date) };
             if (location) filter.location = location;
             if (eventType) filter.eventType = eventType;
 
-            const events = await Event.find(filter).sort({ date: 1 });
-            res.status(200).json({ success: true, events });
+            const events = await Event.find(filter)
+                .sort({ [sortBy]: order === 'desc' ? -1 : 1 })
+                .skip((page - 1) * limit)
+                .limit(parseInt(limit));
+
+            const total = await Event.countDocuments(filter);
+
+            res.status(200).json({
+                success: true,
+                events,
+                totalPages: Math.ceil(total / limit),
+                currentPage: parseInt(page),
+            });
         } catch (error) {
             res.status(500).json({ success: false, message: "Internal server error" });
         }
@@ -89,6 +100,36 @@ export class EventController {
             }
 
             res.status(200).json({ success: true, rsvpStatus: attendee.rsvpStatus });
+        } catch (error) {
+            res.status(500).json({ success: false, message: "Internal server error" });
+        }
+    }
+
+    async getMyEvents(req, res) {
+        try {
+            const userId = req.user.id;
+            const events = await Event.find({ userId });
+
+            res.status(200).json({ success: true, events });
+        } catch (error) {
+            res.status(500).json({ success: false, message: "Internal server error" });
+        }
+    }
+
+    async getEventRSVPs(req, res) {
+        try {
+            const { eventId } = req.params;
+            const event = await Event.findById(eventId);
+
+            if (!event) {
+                return res.status(404).json({ success: false, message: "Event not found" });
+            }
+
+            if (event.userId.toString() !== req.user.id) {
+                return res.status(403).json({ success: false, message: "Unauthorized" });
+            }
+
+            res.status(200).json({ success: true, attendees: event.attendees });
         } catch (error) {
             res.status(500).json({ success: false, message: "Internal server error" });
         }
