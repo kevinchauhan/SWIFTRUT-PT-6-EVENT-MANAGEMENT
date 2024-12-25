@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import auth from './routes/auth.js';
+import event from './routes/event.js';
 import db from './config/db.js';
 import { Config } from './config/index.js';
 
@@ -24,6 +25,7 @@ app.use(morgan());
 app.use(helmet());
 
 app.use("/api/auth", auth);
+app.use('/api/events', event);
 
 app.use((req, res, next) => {
     res.status(404).json({ message: 'Route not found' });
