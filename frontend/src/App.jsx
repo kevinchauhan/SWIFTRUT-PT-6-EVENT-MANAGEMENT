@@ -6,6 +6,7 @@ import HomePage from './pages/Home';
 import axios from 'axios';
 import useAuthStore from './store/authStore';
 import { useEffect } from 'react';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   const { login, logout } = useAuthStore();
@@ -47,6 +48,7 @@ function App() {
           </Routes>
         </main>
       </div>
+      <ToastContainer position="top-center" autoClose={2000} hideProgressBar />
     </Router>
   );
 }
