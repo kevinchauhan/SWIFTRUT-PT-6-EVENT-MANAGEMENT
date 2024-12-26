@@ -30,15 +30,15 @@ export class EventController {
         try {
             const { date, location, eventType, limit = 10, page = 1, sortBy = 'date', order = 'asc' } = req.query;
             const filter = {};
-
             if (date) filter.date = { $gte: new Date(date) };
-            if (location) filter.location = location;
+            if (location) filter.location = { $regex: new RegExp(location, 'i') };;
             if (eventType) filter.eventType = eventType;
-
+            console.log(filter);
             const events = await Event.find(filter)
                 .sort({ [sortBy]: order === 'desc' ? -1 : 1 })
                 .skip((page - 1) * limit)
                 .limit(parseInt(limit));
+            console.log(events)
 
             const total = await Event.countDocuments(filter);
 
@@ -57,7 +57,6 @@ export class EventController {
         try {
             const { eventId } = req.params;
             const event = await Event.findById(eventId);
-
             if (!event) {
                 return res.status(404).json({ success: false, message: "Event not found" });
             }
@@ -78,6 +77,7 @@ export class EventController {
             await event.save();
             res.status(200).json({ success: true, message: "RSVP successful" });
         } catch (error) {
+            console.log(error)
             res.status(500).json({ success: false, message: "Internal server error" });
         }
     }
