@@ -177,9 +177,10 @@ export class EventController {
                 return res.status(403).json({ success: false, message: "Unauthorized" });
             }
 
-            await event.remove();
+            await Event.findByIdAndDelete(eventId);
             res.status(200).json({ success: true, message: "Event deleted successfully" });
         } catch (error) {
+            console.log(error)
             res.status(500).json({ success: false, message: "Internal server error" });
         }
     }

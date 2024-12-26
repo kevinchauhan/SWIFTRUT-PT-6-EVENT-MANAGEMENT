@@ -51,9 +51,7 @@ const MyEvents = () => {
         return <p className="text-center mt-10 text-gray-600">Loading your events...</p>;
     }
 
-    if (error) {
-        return <p className="text-center mt-10 text-red-500">{error}</p>;
-    }
+
 
     if (events.length === 0) {
         return (
