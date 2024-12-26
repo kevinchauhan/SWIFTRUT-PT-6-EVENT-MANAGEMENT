@@ -33,7 +33,6 @@ export class EventController {
             if (date) filter.date = { $gte: new Date(date) };
             if (location) filter.location = { $regex: new RegExp(location, 'i') };;
             if (eventType) filter.eventType = eventType;
-            console.log(filter);
             const events = await Event.find(filter)
                 .sort({ [sortBy]: order === 'desc' ? -1 : 1 })
                 .skip((page - 1) * limit)

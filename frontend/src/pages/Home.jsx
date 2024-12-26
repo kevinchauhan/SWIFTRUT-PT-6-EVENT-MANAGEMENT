@@ -36,7 +36,7 @@ const HomePage = () => {
         });
     };
 
-    const handleRSVP = async (eventId) => {
+    const handleRSVP = async (eventId, index) => {
         if (!isAuthenticated) {
             toast.error('You must be logged in to RSVP.');
             return;
@@ -47,11 +47,25 @@ const HomePage = () => {
 
             if (response.status === 200) {
                 toast.success('RSVP successful!');
-                // Optionally, update the event list with RSVP status
+                const updatedEvents = [...events];
+                updatedEvents[index].rsvpStatus = 'Confirmed'; // Update the RSVP status in the state
+                setEvents(updatedEvents); // Re-render the events with updated RSVP status
             }
         } catch (error) {
-            toast.error('Failed to RSVP. Please try again.');
+            if (error.response && error.response.data) {
+                toast.error(error.response.data.message || 'Failed to RSVP. Please try again.');
+            } else {
+                toast.error('Failed to RSVP. Please try again.');
+            }
         }
+    };
+
+    const handleResetFilters = () => {
+        setFilters({
+            date: '',
+            location: '',
+            eventType: ''
+        });
     };
 
     return (
@@ -68,6 +82,8 @@ const HomePage = () => {
                     onChange={handleFilterChange}
                     className="px-4 py-2 border border-gray-300 rounded-md"
                 />
+                <span className="ml-2 text-gray-500">Only events from this date or later</span>
+
                 <label className="ml-4 mr-2">Location</label>
                 <input
                     type="text"
@@ -77,6 +93,12 @@ const HomePage = () => {
                     placeholder="Enter location"
                     className="px-4 py-2 border border-gray-300 rounded-md"
                 />
+                <button
+                    onClick={handleResetFilters}
+                    className="px-2 py-2 ml-5 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                >
+                    Reset
+                </button>
             </div>
 
             {/* Event List */}
@@ -84,8 +106,17 @@ const HomePage = () => {
                 {events.length === 0 ? (
                     <p>No events available at the moment.</p>
                 ) : (
-                    events.map((event) => (
+                    events.map((event, index) => (
                         <div key={event._id} className="bg-white p-4 rounded-lg shadow-md">
+                            {/* Event Image */}
+                            {event.image && (
+                                <img
+                                    src={event.image} // Assuming event.image contains the image URL
+                                    alt={event.title}
+                                    className="w-full h-64 object-cover rounded-lg mb-4"
+                                />
+                            )}
+
                             <h3 className="text-xl font-semibold text-gray-800">{event.title}</h3>
                             <p className="text-sm text-gray-600">{event.description}</p>
                             <div className="mt-4">
@@ -95,19 +126,21 @@ const HomePage = () => {
 
                             {/* RSVP Button */}
                             <div className="mt-4 flex justify-between items-center">
-                                {event.attendees.length < event.maxAttendees ? (
+                                {event.attendees.length < event.maxAttendees && event.rsvpStatus !== 'Confirmed' ? (
                                     <button
-                                        onClick={() => handleRSVP(event._id)}
+                                        onClick={() => handleRSVP(event._id, index)}
                                         className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none"
                                     >
                                         RSVP
                                     </button>
                                 ) : (
-                                    <span className="text-red-500">Event full</span>
+                                    <button
+                                        className="bg-gray-300 text-white py-2 px-4 rounded-md cursor-not-allowed"
+                                        disabled
+                                    >
+                                        RSVP Confirmed
+                                    </button>
                                 )}
-                                <Link to={`/event/${event._id}`} className="text-indigo-600 hover:underline">
-                                    View Details
-                                </Link>
                             </div>
                         </div>
                     ))
