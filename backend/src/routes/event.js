@@ -12,6 +12,8 @@ router.get('/:eventId/rsvp-status', authenticate, (req, res) => eventController.
 router.put('/:eventId', authenticate, (req, res) => eventController.editEvent(req, res));
 router.delete('/:eventId', authenticate, (req, res) => eventController.deleteEvent(req, res));
 router.get('/my-events', authenticate, (req, res) => eventController.getMyEvents(req, res));
+router.get('/:eventId', (req, res) => eventController.getEventById(req, res));
+
 
 
 export default router;

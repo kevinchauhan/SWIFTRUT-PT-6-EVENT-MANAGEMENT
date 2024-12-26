@@ -9,6 +9,7 @@ import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import CreateEvent from './pages/CreateEvent';
 import MyEvents from './pages/MyEvent';
+import EditEvent from './pages/EditEvent';
 
 function App() {
   const { login, logout } = useAuthStore();
@@ -49,6 +50,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/create-event" element={<CreateEvent />} />
             <Route path="/my-events" element={<MyEvents />} />
+            <Route path="/edit-event/:eventId" element={<EditEvent />} />
           </Routes>
         </main>
       </div>
