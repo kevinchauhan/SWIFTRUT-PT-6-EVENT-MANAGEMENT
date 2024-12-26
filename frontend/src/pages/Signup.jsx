@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const Signup = () => {
@@ -128,7 +128,7 @@ const Signup = () => {
                     <div className="text-center">
                         <p className="text-sm text-gray-600">
                             Already have an account?{' '}
-                            <a href="/login" className="text-indigo-600 font-semibold hover:text-indigo-800">Login</a>
+                            <Link href="/login" className="text-indigo-600 font-semibold hover:text-indigo-800">Login</Link>
                         </p>
                     </div>
                 </form>

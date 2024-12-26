@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../store/authStore';
 import { toast } from 'react-toastify';
 
@@ -103,7 +103,7 @@ const Login = () => {
                     <div className="text-center">
                         <p className="text-sm text-gray-600">
                             Don't have an account?{' '}
-                            <a href="/signup" className="text-indigo-600 font-semibold hover:text-indigo-800">Sign Up</a>
+                            <Link href="/signup" className="text-indigo-600 font-semibold hover:text-indigo-800">Sign Up</Link>
                         </p>
                     </div>
                 </form>
