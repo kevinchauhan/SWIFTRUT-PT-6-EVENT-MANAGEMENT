@@ -7,6 +7,7 @@ const MyEvents = () => {
     const [events, setEvents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [rsvpDetails, setRsvpDetails] = useState(null); // To store RSVP data for a selected event
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -47,11 +48,22 @@ const MyEvents = () => {
         }
     };
 
+    const handleGetRSVPs = async (eventId) => {
+        try {
+            const response = await axios.get(
+                `${import.meta.env.VITE_BACKEND_API_URL}/api/events/${eventId}/rsvps`,
+                { withCredentials: true }
+            );
+            setRsvpDetails(response.data.attendees);
+        } catch (err) {
+            console.error(err);
+            toast.error('Failed to fetch RSVP details.');
+        }
+    };
+
     if (loading) {
         return <p className="text-center mt-10 text-gray-600">Loading your events...</p>;
     }
-
-
 
     if (events.length === 0) {
         return (
@@ -106,7 +118,25 @@ const MyEvents = () => {
                         >
                             Delete
                         </button>
+                        <button
+                            onClick={() => handleGetRSVPs(event._id)}
+                            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                        >
+                            Get RSVP Details
+                        </button>
                     </div>
+                    {rsvpDetails && rsvpDetails.length > 0 && (
+                        <div className="mt-4">
+                            <h3 className="text-sm font-semibold text-gray-800">RSVP Details:</h3>
+                            <ul>
+                                {rsvpDetails.map((attendee, index) => (
+                                    <li key={index} className="text-sm text-gray-600">
+                                        ({index + 1}) {attendee.userName} - {attendee.rsvpStatus}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
             ))}
         </div>

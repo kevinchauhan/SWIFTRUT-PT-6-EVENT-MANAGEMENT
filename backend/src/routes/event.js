@@ -7,6 +7,7 @@ const eventController = new EventController();
 
 router.post('/', authenticate, (req, res) => eventController.createEvent(req, res));
 router.get('/', (req, res) => eventController.getEvents(req, res));
+router.get('/:eventId/rsvps', authenticate, (req, res) => eventController.getEventRSVPs(req, res));
 router.post('/:eventId/rsvp', authenticate, (req, res) => eventController.rsvpEvent(req, res));
 router.get('/:eventId/rsvp-status', authenticate, (req, res) => eventController.getRSVPStatus(req, res));
 router.put('/:eventId', authenticate, (req, res) => eventController.editEvent(req, res));

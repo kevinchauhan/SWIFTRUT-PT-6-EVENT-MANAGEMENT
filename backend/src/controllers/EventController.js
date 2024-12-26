@@ -66,7 +66,7 @@ export class EventController {
             }
 
             const alreadyRSVPed = event.attendees.some(
-                attendee => attendee.userId.toString() === req.user.id
+                attendee => attendee.userId?.toString() === req.user.id
             );
 
             if (alreadyRSVPed) {
@@ -119,7 +119,7 @@ export class EventController {
     async getEventRSVPs(req, res) {
         try {
             const { eventId } = req.params;
-            const event = await Event.findById(eventId);
+            const event = await Event.findById(eventId).populate('attendees.userId', 'name'); // Populating userId with 'name' field
 
             if (!event) {
                 return res.status(404).json({ success: false, message: "Event not found" });
@@ -129,11 +129,19 @@ export class EventController {
                 return res.status(403).json({ success: false, message: "Unauthorized" });
             }
 
-            res.status(200).json({ success: true, attendees: event.attendees });
+            // Mapping through attendees to include the populated user information (userName)
+            const attendeesWithNames = event.attendees.map(attendee => ({
+                userName: attendee.userId.name,
+                rsvpStatus: attendee.rsvpStatus,
+            }));
+
+            res.status(200).json({ success: true, attendees: attendeesWithNames });
         } catch (error) {
             res.status(500).json({ success: false, message: "Internal server error" });
         }
     }
+
+
 
     async editEvent(req, res) {
         try {
