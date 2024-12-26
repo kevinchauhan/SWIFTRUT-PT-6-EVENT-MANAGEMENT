@@ -7,6 +7,7 @@ import axios from 'axios';
 import useAuthStore from './store/authStore';
 import { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
+import CreateEvent from './pages/CreateEvent';
 
 function App() {
   const { login, logout } = useAuthStore();
@@ -45,6 +46,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/create-event" element={<CreateEvent />} />
           </Routes>
         </main>
       </div>
